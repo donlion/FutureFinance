@@ -2,6 +2,9 @@ import React, {Component} from 'react';
 
 import App from '../scripts/components/App';
 
+global.navigator = global.navigator || {};
+global.navigator.userAgent = global.navigator.userAgent || 'all';
+
 export default class Document extends Component {
     render() {
         return (
