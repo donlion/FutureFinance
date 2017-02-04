@@ -4,10 +4,10 @@ import Theme from '../../utilities/theme';
 import {get as getPath} from 'lodash';
 // Components
 import {
-    Card,
-    CardHeader,
-    CardText,
-    Divider
+    Paper,
+    Subheader,
+    List,
+    ListItem
 } from 'material-ui';
 
 export default class Header extends Component {
@@ -23,18 +23,6 @@ export default class Header extends Component {
         };
     }
 
-    get getTitle() {
-        const {data} = this.props;
-
-        let username = getPath(data, 'username');
-
-        if (!username) {
-            return 'Loading...';
-        }
-
-        return data.username;
-    }
-
     get getUserDetails() {
         const {data} = this.props;
 
@@ -43,41 +31,48 @@ export default class Header extends Component {
         let cpr = getPath(data, 'cpr');
         let firstName = getPath(data, 'firstName');
         let lastName = getPath(data, 'lastName');
-
-        if (cpr) {
-            output = output.concat(`CPR: ${cpr}`);
-        }
+        let username = getPath(data, 'username');
 
         if (firstName) {
-            output = output.concat(`First name: ${firstName}`);
+            output = output.concat({
+                title: 'First name',
+                text: firstName
+            });
         }
 
         if (lastName) {
-            output = output.concat(`Last name: ${lastName}`);
+            output = output.concat({
+                title: 'Last name',
+                text: lastName
+            });
+        }
+        
+        if (!output.length) {
+            output.push({
+                title: 'Loading',
+                text: 'Please have patience'
+            });
         }
 
         return output;
     }
 
     render() {
-        const {
-            getTitle,
-            getUserDetails
-        } = this;
+        const {getUserDetails} = this;
 
         return (
             <Theme>
-                <Card>
-                    <CardHeader title={getTitle}/>
+                <Paper zDepth={1}>
+                    <List>
                         {getUserDetails.map((detail, index) => (
-                            <div>
-                                {index !== 0 ? <Divider /> : null}
-                                <CardText>
-                                    {detail}
-                                </CardText>
-                            </div>
+                            <ListItem
+                                key={index}
+                                primaryText={detail.title}
+                                secondaryText={<p>{detail.text}</p>}
+                                disabled={true} />
                         ))}
-                </Card>
+                    </List>
+                </Paper>
             </Theme>
         );
     }

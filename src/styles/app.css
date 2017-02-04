@@ -9,10 +9,9 @@ html, body {
 
 .content {
     max-width: 1140px;
-    margin: 0 auto;
+    margin: 24px auto;
     display: flex;
     flex-direction: row;
-    margin-top: 24px;
 }
 .content > * {
     padding: 0 12px;
@@ -20,9 +19,46 @@ html, body {
 .content .left {
     width: 300px;
     max-width: 100%;
+    flex-grow: 0;
+    flex-shrink: 0;
 }
 .content .right {
-    width: auto;
+    flex-grow: 1;
+}
+
+.table {
+    overflow: hidden;
+    width: 100%;
+    display: table;
+}
+.table .row {
+    display: table-row;
+    border-bottom: 1px solid rgb(224, 224, 224);
+    transition: background-color .2s cubic-bezier(0.2,0,0.4,1);
+    background-color: transparent;
+}
+.table .row:hover {
+    background-color: rgba(224, 224, 224, 0.2);
+}
+.table .row:last-of-type {
+    border-bottom: 0;
+}
+.table .column {
+    // Material copy
+    padding-left: 24px;
+    padding-right: 24px;
+    height: 48px;
+    text-align: left;
+    font-size: 13px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    background-color: inherit;
+    display: table-cell;
+    vertical-align: middle;
+}
+.table .column:last-of-type {
+    text-align: right;
 }
 
 /**
@@ -31,6 +67,6 @@ Responsive shit
 @media (max-width: 768px) {
     .content {
         flex-direction: column;
-        margin-top: 12px;
+        margin: 12px auto;
     }
 }
