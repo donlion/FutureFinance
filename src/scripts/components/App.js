@@ -19,7 +19,6 @@ injectTapEventPlugin();
 // Endpoint
 import {
     endpointAccount,
-    endpointTransactions,
     endpointFeed,
     token
 } from '../utilities/api';
@@ -34,14 +33,18 @@ export default class App extends Component {
             balance: {}
         }};
 
+        this._cycle = null;
+
         this.updateState = this.updateState.bind(this);
         this.fetchUser = this.fetchUser.bind(this);
-        this.fetchTransactions = this.fetchTransactions.bind(this);
         this.fetchFeed = this.fetchFeed.bind(this);
+        this.fetchCycle = this.fetchCycle.bind(this);
     }
 
     componentDidMount() {
-        this.fetchUser().then(this.fetchFeed);
+        this.fetchUser()
+            .then(this.fetchFeed)
+            .then(this.fetchCycle);
     }
 
     componentDidUpdate() {
@@ -166,39 +169,21 @@ export default class App extends Component {
             });
     }
 
-    fetchTransactions() {
-        const {updateState} = this;
+    fetchCycle() {
+        const {fetchFeed} = this;
 
-        return request
-            .get(endpointTransactions, {
-                headers: {'Authorization': `Basic ${token}`}
-            })
-            .then(response => {
-                let transactions = getPath(response, '_embedded.transactions');
-
-                if (!transactions || !transactions.length) {
-                    return;
-                }
-
-                transactions = transactions.reduce((result, item) => {
-                    let id = item.id;
-
-                    if (!id) {
-                        return result;
-                    }
-
-                    result = Object.assign({}, result, {
-                        [item.id]: item
-                    });
-
-                    return result;
-                }, {});
-
-                return updateState('transactions', transactions);
-            })
-            .catch(error => {
-                console.log('transactions error', error); // eslint-disable-line no-console
+        fetchFeed()
+            .then(() => {
+                this._cycle = setTimeout(() => requestAnimationFrame(() => {
+                    this.fetchCycle();
+                }), 1000)
             });
+    }
+
+    stopCycle() {
+        if (this._cycle) {
+            clearTimeout(this._cycle);
+        }
     }
 
     get getHeader() {
