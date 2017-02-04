@@ -48,7 +48,7 @@ export default class Header extends Component {
             return;
         }
 
-        return moment(data.transactionDate).format('HH:mm:ss DD/MM - YYYY')
+        return moment(data.transactionDate).format('HH:mm MMM Do')
     }
 
     get getIsEmpty() {
@@ -79,13 +79,14 @@ export default class Header extends Component {
                 <div className="column">
                     {getTime}
                 </div>
-                <div className="column">
+                <div className="column absorbing">
                     {getTitle}
                 </div>
                 <div className="column">
-                    {getAmount}
+                    <span className="prominent">
+                        {getAmount}
+                    </span>
                 </div>
-                <Divider />
             </div>
         );
     }

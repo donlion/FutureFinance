@@ -10,6 +10,9 @@ export default class Header extends Component {
         return (
             <Theme>
                 <AppBar
+                    style={{
+                        backgroundColor: '#052D46'
+                    }}
                     title="PBA"
                     showMenuIconButton={false} />
             </Theme>

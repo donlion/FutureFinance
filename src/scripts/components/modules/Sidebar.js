@@ -4,6 +4,7 @@ import Theme from '../../utilities/theme';
 import getPath from 'lodash/get';
 // Components
 import Paper from 'material-ui/Paper';
+import Subheader from 'material-ui/Subheader';
 import {
     List,
     ListItem
@@ -61,7 +62,10 @@ export default class Header extends Component {
 
         return (
             <Theme>
-                <Paper zDepth={1}>
+                <Paper
+                    style={{margin: 12}}
+                    zDepth={1}>
+                    <Subheader>Your profile</Subheader>
                     <List>
                         {getUserDetails.map((detail, index) => (
                             <ListItem

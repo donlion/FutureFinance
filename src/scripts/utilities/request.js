@@ -1,14 +1,7 @@
 import axios from 'axios';
 import getPath from 'lodash/get';
-import {token} from './api';
 
 const request = options => {
-    options = Object.assign({}, options, {
-        headers: Object.assign({}, options.headers, {
-            'Authorization': `Basic ${token}`
-        })
-    });
-
     return axios(options).then(response => getPath(response, 'data'));
 };
 

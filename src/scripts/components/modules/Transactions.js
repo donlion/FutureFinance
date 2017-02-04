@@ -23,7 +23,7 @@ export default class Transactions extends Component {
             margin: '12px auto'
         };
 
-        if (!list) {
+        if (!list || !list.length) {
             return (
                 <CircularProgress style={style}/>
             );
@@ -47,7 +47,7 @@ export default class Transactions extends Component {
 
         return (
             <Theme>
-                <Paper>
+                <Paper style={{margin: 12}}>
                     <Subheader>Transactions</Subheader>
                     {getList}
                 </Paper>

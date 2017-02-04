@@ -3,6 +3,8 @@
     overflow: hidden;
     width: 100%;
     display: table;
+    table-layout: auto;
+    border-collapse: collapse;
 }
 .table .row {
     display: table-row;
@@ -17,9 +19,9 @@
     border-bottom: 0;
 }
 .table .column {
-    // Material copy
-    padding-left: 24px;
-    padding-right: 24px;
+    /* Material copy */
+    padding-left: 16px;
+    padding-right: 16px;
     height: 48px;
     text-align: left;
     font-size: 13px;
@@ -31,9 +33,36 @@
     vertical-align: middle;
     border-bottom: 1px solid rgb(224, 224, 224);
 }
+.table .column.absorbing {
+    width: 100%;
+}
 .table .row:last-of-type .column {
     border-bottom: 0;
 }
 .table .column:last-of-type {
     text-align: right;
+}
+
+@media (max-width: 767px) {
+    .table {
+        display: block;
+    }
+    .table .row {
+        display: block;
+        padding: 12px 0;
+    }
+    .table .column {
+        border: 0;
+        display: block;
+        height: 30px;
+    }
+    .table .column:last-of-type {
+        text-align: left;
+    }
+    .table .column:before {
+        content: '';
+        display: inline-block;
+        vertical-align: middle;
+        height: 100%;
+    }
 }
