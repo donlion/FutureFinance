@@ -38,9 +38,7 @@ export default class Header extends Component {
         if (getIsEmpty) {
             return;
         }
-
-        console.log(data.amount, round(data.amount));
-
+        
         return round(data.amount);
     }
 
