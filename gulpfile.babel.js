@@ -51,6 +51,7 @@ const SERVER = {
  */
 const STYLES = {
     src: path.join(PATHS.src, 'styles/*.css'),
+    watch: path.join(PATHS.src, 'styles/**/*.css'),
     dist: path.join(PATHS.dist, 'css')
 };
 
@@ -66,8 +67,6 @@ const compileScripts = (develop=false) => {
         bundler = watchify(bundler);
 
         bundle = () => {
-            connect.reload();
-
             return bundler.bundle()
                 .on('error', function(err) { console.error(err); this.emit('end'); })
                 .pipe(source('app.js'))
@@ -75,7 +74,8 @@ const compileScripts = (develop=false) => {
                 .pipe(sourcemaps.init({loadMaps: true}))
                 .pipe(uglify())
                 .pipe(sourcemaps.write('.'))
-                .pipe(gulp.dest(SCRIPTS.dist));
+                .pipe(gulp.dest(SCRIPTS.dist))
+                .pipe(connect.reload());
         };
 
         bundler.on('update', files => {
@@ -148,8 +148,8 @@ gulp.task('static', () => {
  */
 gulp.task('styles', function () {
     return gulp.src(STYLES.src)
-        .pipe(sass({ outputStyle: 'nested', errLogToConsole: true}).on('error', sass.logError))
         .pipe(importCss())
+        .pipe(sass({ outputStyle: 'nested', errLogToConsole: true}).on('error', sass.logError))
         .pipe(autoprefixer({ browsers: ['last 4 versions'], cascade: true, remove: true }))
         .pipe(gulp.dest(STYLES.dist))
         .pipe(connect.reload());
@@ -173,7 +173,7 @@ gulp.task('server', () => {
 gulp.task('watch', ['build'], () => {
     runSequence(['server', 'scripts:watch']);
     gulp.watch(SERVER.src, ['static']);
-    gulp.watch(STYLES.src, ['styles']);
+    gulp.watch(STYLES.watch, ['styles']);
 });
 
 /**
