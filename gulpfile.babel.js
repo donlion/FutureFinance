@@ -1,4 +1,5 @@
 import gulp from 'gulp';
+import gutil from 'gulp-util';
 import path from 'path';
 import del from 'del';
 import sourcemaps from 'gulp-sourcemaps';
@@ -15,6 +16,7 @@ import runSequence from 'run-sequence';
 import eslint from 'gulp-eslint';
 import merge from 'merge-stream';
 import renderReact from 'gulp-render-react';
+import uglify from 'gulp-uglify';
 
 /**
  * @name PATHS
@@ -54,38 +56,57 @@ const STYLES = {
 
 /**
  * @name compileScripts
- * @param watch
+ * @param develop
  */
-const compileScripts = (watch=false) => {
-    let bundler = browserify(SCRIPTS.src, {debug: watch}).transform(babel);
+const compileScripts = (develop=false) => {
+    let bundler = browserify(SCRIPTS.src, {debug: develop}).transform(babel);
+    let bundle;
 
-    if (watch) {
+    if (develop) {
         bundler = watchify(bundler);
-    }
 
-    let bundle = () => {
-        connect.reload();
+        bundle = () => {
+            connect.reload();
 
-        return bundler.bundle()
-            .on('error', function(err) { console.error(err); this.emit('end'); })
-            .pipe(source('app.js'))
-            .pipe(buffer())
-            .pipe(sourcemaps.init({loadMaps: true}))
-            .pipe(sourcemaps.write('.'))
-            .pipe(gulp.dest(SCRIPTS.dist))
-            .pipe(connect.reload());
-    };
+            return bundler.bundle()
+                .on('error', function(err) { console.error(err); this.emit('end'); })
+                .pipe(source('app.js'))
+                .pipe(buffer())
+                .pipe(sourcemaps.init({loadMaps: true}))
+                .pipe(uglify())
+                .pipe(sourcemaps.write('.'))
+                .pipe(gulp.dest(SCRIPTS.dist));
+        };
 
-    if (watch) {
         bundler.on('update', files => {
             let linting = gulp.src(files)
                 .pipe(eslint('eslint.json'))
                 .pipe(eslint.format());
 
-            console.log('... bundling');
+            gutil.log('Browserify bundling...');
 
             return merge(linting, bundle());
         });
+
+        bundler.on('time', time => {
+            gutil.log(`Bundling done after ${time}ms`);
+        });
+
+    } else {
+
+        bundle = () => {
+            connect.reload();
+
+            return bundler.bundle()
+                .on('error', function(err) { console.error(err); this.emit('end'); })
+                .pipe(source('app.js'))
+                .pipe(buffer())
+                .pipe(sourcemaps.init({loadMaps: true}))
+                .pipe(uglify())
+                .pipe(sourcemaps.write('.'))
+                .pipe(gulp.dest(SCRIPTS.dist))
+                .pipe(connect.reload());
+        };
     }
 
     bundle();
