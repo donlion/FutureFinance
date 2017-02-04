@@ -1,13 +1,11 @@
 import React from 'react';
 import Component from '../Model';
 import request from '../utilities/request';
-import {
-    union,
-    mergeWith,
-    get as getPath,
-    isEmpty,
-    sortBy
-} from 'lodash';
+import union from 'lodash/union';
+import mergeWith from 'lodash/mergeWith';
+import getPath from 'lodash/get';
+import isEmpty from 'lodash/isEmpty';
+import sortBy from 'lodash/sortBy';
 import Promise from 'bluebird';
 // Components
 import Header from './modules/Header';

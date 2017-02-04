@@ -1,15 +1,11 @@
 import React, {PropTypes} from 'react';
 import Component from '../../Model';
-import {
-    isEmpty,
-    get as getPath
-} from 'lodash';
+import isEmpty from 'lodash/isEmpty';
+import getPath from 'lodash/get';
 import round from '../../utilities/round';
 import moment from 'moment';
 // Components
-import {
-    Divider
-} from 'material-ui';
+import Divider from 'material-ui/Divider';
 
 export default class Header extends Component {
     static propTypes = {

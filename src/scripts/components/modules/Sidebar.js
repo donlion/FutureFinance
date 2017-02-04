@@ -1,14 +1,13 @@
 import React, {PropTypes} from 'react';
 import Component from '../../Model';
 import Theme from '../../utilities/theme';
-import {get as getPath} from 'lodash';
+import getPath from 'lodash/get';
 // Components
+import Paper from 'material-ui/Paper';
 import {
-    Paper,
-    Subheader,
     List,
     ListItem
-} from 'material-ui';
+} from 'material-ui/List';
 
 export default class Header extends Component {
     static propTypes = {
@@ -46,7 +45,7 @@ export default class Header extends Component {
                 text: lastName
             });
         }
-        
+
         if (!output.length) {
             output.push({
                 title: 'Loading',

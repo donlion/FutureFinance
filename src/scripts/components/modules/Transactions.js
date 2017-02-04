@@ -1,16 +1,11 @@
 import React, {PropTypes} from 'react';
 import Component from '../../Model';
 import Theme from '../../utilities/theme';
-import {get as getPath} from 'lodash';
+import getPath from 'lodash/get';
 // Components
-import {
-    Paper,
-    Subheader,
-    Table,
-    TableBody,
-    List,
-    CircularProgress
-} from 'material-ui';
+import Paper from 'material-ui/Paper';
+import Subheader from 'material-ui/Subheader';
+import CircularProgress from 'material-ui/CircularProgress';
 import Transaction from './Transaction';
 
 export default class Transactions extends Component {

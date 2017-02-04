@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {get as getPath} from 'lodash';
+import getPath from 'lodash/get';
 import {token} from './api';
 
 const request = options => {
