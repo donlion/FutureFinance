@@ -4,6 +4,7 @@ import isEmpty from 'lodash/isEmpty';
 import getPath from 'lodash/get';
 import round from '../../utilities/round';
 import formatTime from '../../utilities/formatTime';
+import numberToCurrency from '../../utilities/numberToCurrency';
 // Components
 import Divider from 'material-ui/Divider';
 
@@ -35,7 +36,7 @@ export default class Transaction extends Component {
             return;
         }
         
-        return round(data.amount);
+        return numberToCurrency(data.amount);
     }
 
     get getTime() {

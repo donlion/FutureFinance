@@ -10,9 +10,6 @@ import Promise from 'bluebird';
 // Components
 import Header from './modules/Header';
 import Sidebar from './modules/Sidebar';
-import Transactions from './modules/Transactions';
-import Balance from './modules/Balance';
-import Message from './modules/Message';
 import Login from './modules/Login';
 import Feed from './modules/Feed';
 // Custom
@@ -149,14 +146,12 @@ export default class App extends Component {
                 let addToFeed = response.reduce((result, item) => {
                     let type = item.type;
                     let feed = item.feed;
-                    let id;
+                    let id = item.id;
 
                     // if no type or no feed; don't add it
                     if (!type || !feed) {
                         return result;
                     }
-
-                    id = feed.id || feed[0].id;
 
                     result = Object.assign({}, result, {
                         [id] : {

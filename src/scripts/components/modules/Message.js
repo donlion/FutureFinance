@@ -6,6 +6,7 @@ import formatTime from '../../utilities/formatTime';
 // Components
 import Paper from 'material-ui/Paper';
 import Subheader from 'material-ui/Subheader';
+import Avatar from 'material-ui/Avatar';
 
 export default class Message extends Component {
     static propTypes = {
@@ -40,11 +41,33 @@ export default class Message extends Component {
         return time || false;
     }
 
+    get getAvatar() {
+        const {data} = this.props;
+
+        let avatar = getPath(data, 'avatar');
+        let color = getPath(data, 'avatarColor');
+
+        return !avatar ? null : (
+            <Avatar
+                style={{
+                    position: 'relative',
+                    top: 5,
+                    marginRight: 12
+                }}
+                backgroundColor="transparent"
+                color={color}
+                icon={avatar}
+                size={30} />
+        );
+
+    }
+
     render() {
         const {
             getText,
             getHeader,
-            getTime
+            getTime,
+            getAvatar
         } = this;
 
         if (!getText) {
@@ -57,7 +80,11 @@ export default class Message extends Component {
                     className="message"
                     transitionEnabled={false}
                     style={{margin: 12}}>
-                    <Subheader>{getHeader || 'Personal assistant'}{getTime ? ` - ${formatTime(getTime)}` : null}</Subheader>
+                    <Subheader>
+                        {getAvatar}
+                        <strong>{getHeader || 'Personal assistant'}</strong>
+                        {getTime ? ` - ${formatTime(getTime)}` : null}
+                    </Subheader>
                     <p style={{
                         padding: 16,
                         margin: 0

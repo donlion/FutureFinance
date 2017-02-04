@@ -1,10 +1,19 @@
 import React, {PropTypes} from 'react';
 import Component from '../../Model';
 import getPath from 'lodash/get';
+import numberToCurrency from '../../utilities/numberToCurrency';
 // Components
 import Message from './Message';
 import Transactions from './Transactions';
 import ReactTransitionGroup from 'react-addons-css-transition-group';
+// Icons
+import AccountBalance from 'material-ui/svg-icons/action/account-balance';
+import QuestionAnswer from 'material-ui/svg-icons/action/question-answer';
+// Colors
+import {
+    green500 as colorBalance,
+    purple500 as colorStatus
+} from 'material-ui/styles/colors';
 
 export default class Feed extends Component {
     static propTypes = {
@@ -27,6 +36,10 @@ export default class Feed extends Component {
         let transactions;
         let id = getPath(data, 'id');
 
+        if (type === 'answer') {
+            console.log('answer', data);
+        }
+
         switch (type) {
             case 'balance':
                 text = getPath(data, 'feed.balance');
@@ -38,13 +51,15 @@ export default class Feed extends Component {
                         key={id}
                         data={{
                             header: title,
-                            text: getPath(data, 'feed.balance'),
-                            time: time
+                            text: numberToCurrency(text),
+                            time: time,
+                            avatar: <AccountBalance />,
+                            avatarColor: colorBalance
                         }} />
                 );
                 break;
             case 'answer':
-                title = getPath(data, 'title');
+                title = getPath(data, 'feed.title');
                 text = getPath(data, 'feed.text');
                 time = getPath(data, 'feed.created_at');
 
@@ -54,7 +69,9 @@ export default class Feed extends Component {
                         data={{
                             header: title,
                             text: text,
-                            time: time
+                            time: time,
+                            avatar: <QuestionAnswer />,
+                            avatarColor: colorStatus
                         }} />
                 );
                 break;
@@ -93,7 +110,6 @@ export default class Feed extends Component {
 
         return (
             <div>
-                <h1>Feed</h1>
                 <ReactTransitionGroup
                     component="div"
                     className="body"

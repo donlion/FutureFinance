@@ -2,13 +2,17 @@ import React, {PropTypes} from 'react';
 import Component from '../../Model';
 import Theme from '../../utilities/theme';
 import getPath from 'lodash/get';
-import firstChild from '../../utilities/firstChild';
 // Components
 import Paper from 'material-ui/Paper';
 import Subheader from 'material-ui/Subheader';
 import CircularProgress from 'material-ui/CircularProgress';
 import Transaction from './Transaction';
 import ReactTransitionGroup from 'react-addons-css-transition-group';
+import Avatar from 'material-ui/Avatar';
+// Icons
+import CompareArrows from 'material-ui/svg-icons/action/compare-arrows';
+// Colors
+import {blue500} from 'material-ui/styles/colors';
 
 export default class Transactions extends Component {
     static propTypes = {
@@ -79,7 +83,18 @@ export default class Transactions extends Component {
         return (
             <Theme>
                 <Paper style={{margin: 12}}>
-                    <Subheader>{getHeader || Transactions}</Subheader>
+                    <Subheader>
+                        <Avatar
+                            style={{
+                                position: 'relative',
+                                top: 5,
+                                marginRight: 12
+                            }}
+                            color={blue500}
+                            icon={<CompareArrows />}
+                            size={30} />
+                        {getHeader || Transactions}
+                    </Subheader>
                     {getList}
                 </Paper>
             </Theme>
