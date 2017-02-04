@@ -13,6 +13,7 @@ import Sidebar from './modules/Sidebar';
 import Transactions from './modules/Transactions';
 import Balance from './modules/Balance';
 import Message from './modules/Message';
+import Login from './modules/Login';
 // Custom
 import injectTapEventPlugin from 'react-tap-event-plugin';
 injectTapEventPlugin();
@@ -39,10 +40,11 @@ export default class App extends Component {
         this.fetchUser = this.fetchUser.bind(this);
         this.fetchFeed = this.fetchFeed.bind(this);
         this.fetchCycle = this.fetchCycle.bind(this);
+        this.login = this.login.bind(this);
     }
 
-    componentDidMount() {
-        this.fetchUser()
+    login() {
+        return this.fetchUser()
             .then(this.fetchFeed)
             .then(this.fetchCycle);
     }
@@ -140,9 +142,6 @@ export default class App extends Component {
 
                 return Promise.all(promises);
             })
-            .then(() => {
-                console.log('done messing with data');
-            })
             .catch(error => console.error(error)); // eslint-disable-line no-console
     }
 
@@ -175,7 +174,7 @@ export default class App extends Component {
             .then(() => {
                 this._cycle = setTimeout(() => requestAnimationFrame(() => {
                     this.fetchCycle();
-                }), 1000)
+                }), 1000);
             });
     }
 
@@ -227,24 +226,46 @@ export default class App extends Component {
         return sortBy(sortedTransactions, transaction => transaction.transactionDateTimestamp).reverse();
     }
 
+    get getContent() {
+        const {
+            getSidebarData,
+            getBody,
+            login,
+            state: {data}
+        } = this;
+
+        let user = getPath(data, 'user');
+
+        if (!user || isEmpty(user)) {
+            return (
+                <div className="content">
+                    <Login events={{action: login}} />
+                </div>
+            );
+        }
+
+        return (
+            <div className="content">
+                <div className="left">
+                    <Sidebar data={getSidebarData}/>
+                </div>
+                <div className="right">
+                    {getBody}
+                </div>
+            </div>
+        );
+    }
+
     render() {
         const {
             getHeader,
-            getBody,
-            getSidebarData
+            getContent
         } = this;
 
         return (
             <div>
                 {getHeader}
-                <div className="content">
-                    <div className="left">
-                        <Sidebar data={getSidebarData}/>
-                    </div>
-                    <div className="right">
-                        {getBody}
-                    </div>
-                </div>
+                {getContent}
             </div>
         );
     }
