@@ -17,6 +17,7 @@ import eslint from 'gulp-eslint';
 import merge from 'merge-stream';
 import renderReact from 'gulp-render-react';
 import uglify from 'gulp-uglify';
+import insert from 'gulp-insert';
 
 /**
  * @name PATHS
@@ -139,6 +140,7 @@ gulp.task('static', () => {
         .pipe(renderReact({
             type: 'string'
         }))
+        .pipe(insert.prepend('<!doctype html>'))
         .pipe(gulp.dest(SERVER.dist))
         .pipe(connect.reload());
 });
