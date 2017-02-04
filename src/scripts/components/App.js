@@ -131,8 +131,6 @@ export default class App extends Component {
                     let namespace = item.type;
                     let value = getValue(item);
 
-                    console.log(namespace, value);
-
                     if (!value) {
                         return Promise.resolve();
                     }
@@ -144,7 +142,8 @@ export default class App extends Component {
             })
             .then(() => {
                 console.log('done messing with data');
-            });
+            })
+            .catch(error => console.error(error)); // eslint-disable-line no-console
     }
 
     fetchUser() {
@@ -213,9 +212,9 @@ export default class App extends Component {
         }
 
         return {
-            cpr: user.cpr,
             firstName: user.firstname,
-            lastName: user.lastname
+            lastName: user.lastname,
+            accountNumber: user.accountNumber
         };
     }
 

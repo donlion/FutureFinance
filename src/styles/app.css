@@ -33,6 +33,9 @@ html, body {
     color: #666;
     letter-spacing: .2px;
 }
+small.prominent {
+    font-size: smaller;
+}
 
 /**
 Responsive shit

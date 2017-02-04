@@ -9,6 +9,7 @@ import {
     List,
     ListItem
 } from 'material-ui/List';
+import Avatar from 'material-ui/Avatar';
 
 export default class Header extends Component {
     static propTypes = {
@@ -28,30 +29,35 @@ export default class Header extends Component {
 
         let output = [];
 
-        let cpr = getPath(data, 'cpr');
         let firstName = getPath(data, 'firstName');
         let lastName = getPath(data, 'lastName');
-        let username = getPath(data, 'username');
+        let accountNumber = getPath(data, 'accountNumber');
 
-        if (firstName) {
-            output = output.concat({
-                title: 'First name',
-                text: firstName
-            });
-        }
+        if (firstName || lastName) {
+            let name = [].concat(firstName, lastName).filter(item => item).join(' ');
 
-        if (lastName) {
-            output = output.concat({
-                title: 'Last name',
-                text: lastName
-            });
+            let props = {
+                primaryText: name,
+                secondaryText: !accountNumber ? null : (
+                    <p>Account: {accountNumber}</p>
+                ),
+                leftAvatar: (
+                    <Avatar src={`https://api.adorable.io/avatars/${name}`} />
+                )
+            };
+
+            output = output.concat(
+                <ListItem {...props} />
+            );
         }
 
         if (!output.length) {
-            output.push({
-                title: 'Loading',
-                text: 'Please have patience'
-            });
+            output.push(
+                <ListItem
+                    primaryText="Loading..."
+                    secondaryText={<p>Please have patience</p>}
+                />
+           );
         }
 
         return output;
@@ -67,13 +73,7 @@ export default class Header extends Component {
                     zDepth={1}>
                     <Subheader>Your profile</Subheader>
                     <List>
-                        {getUserDetails.map((detail, index) => (
-                            <ListItem
-                                key={index}
-                                primaryText={detail.title}
-                                secondaryText={<p>{detail.text}</p>}
-                                disabled={true} />
-                        ))}
+                        {getUserDetails}
                     </List>
                 </Paper>
             </Theme>

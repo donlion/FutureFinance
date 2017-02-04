@@ -13,7 +13,7 @@ export default class Header extends Component {
                     style={{
                         backgroundColor: '#052D46'
                     }}
-                    title="PBA"
+                    title="Personal Bank Assistant"
                     showMenuIconButton={false} />
             </Theme>
         );

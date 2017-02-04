@@ -37,6 +37,17 @@ export default class Transactions extends Component {
 
         return (
             <div className="table">
+                <div className="row">
+                    <div className="column">
+                        <small className="prominent">Date</small>
+                    </div>
+                    <div className="column absorbing">
+                        <small className="prominent">Description</small>
+                    </div>
+                    <div className="column">
+                        <small className="prominent">Amount</small>
+                    </div>
+                </div>
                 {list}
             </div>
         );
