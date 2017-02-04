@@ -23,12 +23,14 @@ export default class Login extends Component {
                     maxWidth: '300px',
                     width: '100%'
                 }}>
-                    <Subheader>Sign in</Subheader>
+                    <Subheader>Please sign in</Subheader>
+
                     <RaisedButton
-                        label="Sign in to PBA"
+                        label="Sign in"
                         primary={true}
                         style={{
-                            margin: 16
+                            margin: 16,
+                            display: 'block'
                         }}
                         onClick={action} />
                 </Paper>

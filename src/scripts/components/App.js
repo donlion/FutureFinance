@@ -14,6 +14,7 @@ import Transactions from './modules/Transactions';
 import Balance from './modules/Balance';
 import Message from './modules/Message';
 import Login from './modules/Login';
+import Feed from './modules/Feed';
 // Custom
 import injectTapEventPlugin from 'react-tap-event-plugin';
 injectTapEventPlugin();
@@ -21,18 +22,28 @@ injectTapEventPlugin();
 import {
     endpointAccount,
     endpointFeed,
+    endpointTransactions,
     token
 } from '../utilities/api';
+
+/**
+ * @name EMPTY_STATE
+ * @type {{data: {user: {}, transactions: {}, balance: {}}}}
+ */
+const EMPTY_STATE = {
+    data: {
+        user: {},
+        transactions: {},
+        balance: {},
+        feed: []
+    }
+};
 
 export default class App extends Component {
     constructor() {
         super();
 
-        this.state = {data: {
-            user: {},
-            transactions: {},
-            balance: {}
-        }};
+        this.state = EMPTY_STATE;
 
         this._cycle = null;
 
@@ -41,12 +52,20 @@ export default class App extends Component {
         this.fetchFeed = this.fetchFeed.bind(this);
         this.fetchCycle = this.fetchCycle.bind(this);
         this.login = this.login.bind(this);
+        this.logout = this.logout.bind(this);
+        this.fetchTransactions = this.fetchTransactions.bind(this);
     }
 
     login() {
         return this.fetchUser()
+            .then(this.fetchTransactions)
             .then(this.fetchFeed)
             .then(this.fetchCycle);
+    }
+
+    logout() {
+        this.stopCycle();
+        return this.setState({data: EMPTY_STATE.data});
     }
 
     componentDidUpdate() {
@@ -87,33 +106,34 @@ export default class App extends Component {
     updateState(namespace, data) {
         const {state} = this;
 
-        if (!namespace || !data) {
-            return;
-        }
+        return new Promise(resolve => {
 
-        let _state = Object.assign({}, state);
-
-        if (!_state.data[namespace]) {
-            _state.data[namespace] = {};
-        }
-
-        data = Object.keys(data).reduce((result, item) => {
-            if (item.indexOf('_') !== 0) {
-                result = Object.assign({}, result, {
-                    [item]: data[item]
-                });
+            if (!namespace || !data) {
+                return resolve();
             }
 
-            return result;
-        }, {});
+            let _state = Object.assign({}, state);
 
-        _state.data = Object.assign({}, _state.data, {
-            [namespace]: mergeWith({}, _state.data[namespace], data, function (a, b) {
-                return Array.isArray(a) ? union(a, b) : undefined;
-            })
-        });
+            if (!_state.data[namespace]) {
+                _state.data[namespace] = {};
+            }
 
-        return new Promise(resolve => {
+            data = Object.keys(data).reduce((result, item) => {
+                if (item.indexOf('_') !== 0) {
+                    result = Object.assign({}, result, {
+                        [item]: data[item]
+                    });
+                }
+
+                return result;
+            }, {});
+
+            _state.data = Object.assign({}, _state.data, {
+                [namespace]: mergeWith({}, _state.data[namespace], data, function (a, b) {
+                    return Array.isArray(a) ? union(a, b) : undefined;
+                })
+            });
+
             return this.setState(_state, () => {
                 resolve();
             });
@@ -121,26 +141,34 @@ export default class App extends Component {
     }
 
     fetchFeed() {
-        const {
-            updateState,
-            getValue
-        } = this;
+        const {updateState} = this;
 
         return request.get(endpointFeed)
             .then(response => {
 
-                let promises = response.map(item => {
-                    let namespace = item.type;
-                    let value = getValue(item);
+                let addToFeed = response.reduce((result, item) => {
+                    let type = item.type;
+                    let feed = item.feed;
+                    let id;
 
-                    if (!value) {
-                        return Promise.resolve();
+                    // if no type or no feed; don't add it
+                    if (!type || !feed) {
+                        return result;
                     }
 
-                    return updateState(namespace, value);
-                });
+                    id = feed.id || feed[0].id;
 
-                return Promise.all(promises);
+                    result = Object.assign({}, result, {
+                        [id] : {
+                            id,
+                            ...item
+                        }
+                    });
+
+                    return result;
+                }, {});
+
+                return updateState('feed', addToFeed);
             })
             .catch(error => console.error(error)); // eslint-disable-line no-console
     }
@@ -167,6 +195,41 @@ export default class App extends Component {
             });
     }
 
+    fetchTransactions() {
+        const {updateState} = this;
+
+        return request
+            .get(endpointTransactions, {
+                headers: {'Authorization': `Basic ${token}`}
+            })
+            .then(response => {
+                let transactions = getPath(response, '_embedded.transactions');
+
+                if (!transactions || !transactions.length) {
+                    return;
+                }
+
+                transactions = transactions.reduce((result, item) => {
+                    let id = item.id;
+
+                    if (!id) {
+                        return result;
+                    }
+
+                    result = Object.assign({}, result, {
+                        [item.id]: item
+                    });
+
+                    return result;
+                }, {});
+
+                return updateState('transactions', transactions);
+            })
+            .catch(error => {
+                console.error('transactions error', error); // eslint-disable-line no-console
+            });
+    }
+
     fetchCycle() {
         const {fetchFeed} = this;
 
@@ -185,28 +248,30 @@ export default class App extends Component {
     }
 
     get getHeader() {
-        return <Header/>;
+        return (
+            <Header />
+        );
     }
 
     get getBody() {
-        const {
-            getTransactions,
-            state: {data}
-        } = this;
+        const {getFeed} = this;
 
         return (
             <main>
-                <Message data={{...data.answer}} />
-                <Balance data={{...data.balance}} />
-                <Transactions data={{transactions: getTransactions}}/>
+                <Feed data={{feed: getFeed}} />
             </main>
         );
     }
 
     get getSidebarData() {
-        const {data: {user}} = this.state;
+        const {
+            state: {
+                data: {user}
+            },
+            getLoggedIn
+        } = this;
 
-        if (isEmpty(user)) {
+        if (!getLoggedIn) {
             return {};
         }
 
@@ -226,17 +291,26 @@ export default class App extends Component {
         return sortBy(sortedTransactions, transaction => transaction.transactionDateTimestamp).reverse();
     }
 
+    get getFeed() {
+        const {feed} = this.state.data;
+
+        if (!feed || isEmpty(feed)) {
+            return [];
+        }
+
+        return Object.keys(feed).map(id => feed[id]).reverse();
+    }
+
     get getContent() {
         const {
             getSidebarData,
             getBody,
             login,
-            state: {data}
+            logout,
+            getLoggedIn
         } = this;
 
-        let user = getPath(data, 'user');
-
-        if (!user || isEmpty(user)) {
+        if (!getLoggedIn) {
             return (
                 <div className="content">
                     <Login events={{action: login}} />
@@ -247,13 +321,22 @@ export default class App extends Component {
         return (
             <div className="content">
                 <div className="left">
-                    <Sidebar data={getSidebarData}/>
+                    <Sidebar
+                        events={{logout}}
+                        data={getSidebarData}/>
                 </div>
                 <div className="right">
                     {getBody}
                 </div>
             </div>
         );
+    }
+
+    get getLoggedIn() {
+        const {state: {data}} = this;
+        let user = getPath(data, 'user');
+
+        return !isEmpty(user);
     }
 
     render() {

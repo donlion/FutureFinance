@@ -3,11 +3,11 @@ import Component from '../../Model';
 import isEmpty from 'lodash/isEmpty';
 import getPath from 'lodash/get';
 import round from '../../utilities/round';
-import moment from 'moment';
+import formatTime from '../../utilities/formatTime';
 // Components
 import Divider from 'material-ui/Divider';
 
-export default class Header extends Component {
+export default class Transaction extends Component {
     static propTypes = {
         data: PropTypes.object
     };
@@ -48,7 +48,7 @@ export default class Header extends Component {
             return;
         }
 
-        return moment(data.transactionDate).format('HH:mm MMM Do')
+        return formatTime(data.transactionDate);
     }
 
     get getIsEmpty() {

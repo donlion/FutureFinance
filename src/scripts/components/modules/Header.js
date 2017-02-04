@@ -5,14 +5,11 @@ import Theme from '../../utilities/theme';
 import AppBar from 'material-ui/AppBar';
 
 export default class Header extends Component {
-
     render() {
         return (
             <Theme>
                 <AppBar
-                    style={{
-                        backgroundColor: '#052D46'
-                    }}
+                    style={{backgroundColor: '#052D46'}}
                     title="Personal Bank Assistant"
                     showMenuIconButton={false} />
             </Theme>
