@@ -56,6 +56,10 @@ html, body {
     background-color: inherit;
     display: table-cell;
     vertical-align: middle;
+    border-bottom: 1px solid rgb(224, 224, 224);
+}
+.table .row:last-of-type .column {
+    border-bottom: 0;
 }
 .table .column:last-of-type {
     text-align: right;

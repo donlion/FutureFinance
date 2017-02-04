@@ -13,5 +13,5 @@ export default function round(value) {
 
     let output = Number(Math.round(value+'e'+decimals)+'e-'+decimals);
 
-    return output !== NaN ? output : 0;
-};
+    return isNaN(output) ? 0 : output;
+}
