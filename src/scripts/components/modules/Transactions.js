@@ -55,7 +55,15 @@ export default class Transactions extends Component {
 
         if (!list || !list.length) {
             return (
-                <CircularProgress style={style}/>
+                <div className="table">
+                    <div className="row">
+                        <div className="column">
+                            No transactions found
+                        </div>
+                        <div className="column">
+                        </div>
+                    </div>
+                </div>
             );
         }
 
