@@ -52,7 +52,7 @@ export default class Feed extends Component {
                         data={{
                             header: title,
                             text: numberToCurrency(text),
-                            time: time,
+                            time,
                             avatar: <AccountBalance />,
                             avatarColor: colorBalance
                         }} />
@@ -68,20 +68,26 @@ export default class Feed extends Component {
                         key={id}
                         data={{
                             header: title,
-                            text: text,
-                            time: time,
+                            text,
+                            time,
                             avatar: <QuestionAnswer />,
                             avatarColor: colorStatus
                         }} />
                 );
                 break;
-            case 'transaction':
+            case 'transactions':
                 transactions = getPath(data, 'feed');
+                title = getPath(data, 'title');
+                time = getPath(data, 'feed.created_at');
 
                 component = (!transactions || !transactions.length) ? null : (
                     <Transactions
                         key={id}
-                        data={{transactions}} />
+                        data={{
+                            transactions,
+                            time,
+                            header: title
+                        }} />
                 );
                 break;
             default:
@@ -113,7 +119,9 @@ export default class Feed extends Component {
                 <ReactTransitionGroup
                     component="div"
                     className="body"
-                    transitionName="animated">
+                    transitionName="animated"
+                    transitionEnterTimeout={600}
+                    transitionLeaveTimeout={400}>
                     {getFeed.map(item => createComponent(item))}
                 </ReactTransitionGroup>
             </div>

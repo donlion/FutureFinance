@@ -20,6 +20,9 @@ import {
     endpointAccount,
     endpointFeed,
     endpointTransactions,
+    endpointBalance,
+    endpointStatus,
+    endpointSpendings,
     token
 } from '../utilities/api';
 
@@ -51,6 +54,9 @@ export default class App extends Component {
         this.login = this.login.bind(this);
         this.logout = this.logout.bind(this);
         this.fetchTransactions = this.fetchTransactions.bind(this);
+        this.fetchBalance = this.fetchBalance.bind(this);
+        this.fetchStatus = this.fetchStatus.bind(this);
+        this.fetchSpendings = this.fetchSpendings.bind(this);
     }
 
     login() {
@@ -143,6 +149,8 @@ export default class App extends Component {
         return request.get(endpointFeed)
             .then(response => {
 
+                console.log('response', response);
+
                 let addToFeed = response.reduce((result, item) => {
                     let type = item.type;
                     let feed = item.feed;
@@ -151,6 +159,10 @@ export default class App extends Component {
                     // if no type or no feed; don't add it
                     if (!type || !feed) {
                         return result;
+                    }
+
+                    if (type === 'transactions') {
+                        item.feed = getPath(item, 'feed.feed');
                     }
 
                     result = Object.assign({}, result, {
@@ -242,10 +254,16 @@ export default class App extends Component {
         }
     }
 
-    get getHeader() {
-        return (
-            <Header />
-        );
+    fetchBalance() {
+        return request.get(endpointBalance);
+    }
+
+    fetchStatus() {
+        return request.get(endpointStatus);
+    }
+
+    fetchSpendings() {
+        return request.get(endpointSpendings);
     }
 
     get getBody() {
@@ -302,7 +320,10 @@ export default class App extends Component {
             getBody,
             login,
             logout,
-            getLoggedIn
+            getLoggedIn,
+            fetchBalance,
+            fetchStatus,
+            fetchSpendings
         } = this;
 
         if (!getLoggedIn) {
@@ -317,7 +338,12 @@ export default class App extends Component {
             <div className="content">
                 <div className="left">
                     <Sidebar
-                        events={{logout}}
+                        events={{
+                            logout,
+                            fetchBalance,
+                            fetchStatus,
+                            fetchSpendings
+                        }}
                         data={getSidebarData}/>
                 </div>
                 <div className="right">
@@ -335,14 +361,11 @@ export default class App extends Component {
     }
 
     render() {
-        const {
-            getHeader,
-            getContent
-        } = this;
+        const {getContent} = this;
 
         return (
             <div>
-                {getHeader}
+                <Header />
                 {getContent}
             </div>
         );
