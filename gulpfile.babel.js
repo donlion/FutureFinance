@@ -57,6 +57,15 @@ const STYLES = {
 };
 
 /**
+ * @name STATIC
+ * @type {{src, dist}}
+ */
+const STATIC = {
+    src: path.join(PATHS.src, 'static/*.*'),
+    dist: path.join(PATHS.dist, 'static')
+};
+
+/**
  * @name compileScripts
  * @param develop
  */
@@ -110,7 +119,7 @@ const compileScripts = (develop=false) => {
         };
     }
 
-    bundle();
+    return bundle();
 };
 
 /**
@@ -133,15 +142,24 @@ gulp.task('scripts:watch', () => {
 });
 
 /**
- * @name static
+ * @name markup
  */
-gulp.task('static', () => {
+gulp.task('markup', () => {
     return gulp.src(SERVER.src, {read:false})
         .pipe(renderReact({
             type: 'string'
         }))
         .pipe(insert.prepend('<!doctype html>'))
         .pipe(gulp.dest(SERVER.dist))
+        .pipe(connect.reload());
+});
+
+/**
+ * @name static
+ */
+gulp.task('static', () => {
+    return gulp.src(STATIC.src)
+        .pipe(gulp.dest(STATIC.dist))
         .pipe(connect.reload());
 });
 
@@ -172,15 +190,19 @@ gulp.task('server', () => {
 /**
  * @name watch
  */
-gulp.task('watch', ['build'], () => {
-    runSequence(['server', 'scripts:watch']);
-    gulp.watch(SERVER.src, ['static']);
+gulp.task('watch', ['_build'], cb => {
+    runSequence(['server', 'scripts:watch'], cb);
+    gulp.watch(SERVER.src, ['markup']);
     gulp.watch(STYLES.watch, ['styles']);
+    gulp.watch(STATIC.src, ['static']);
 });
+
+/**
+ * @name _build
+ */
+gulp.task('_build', cb => runSequence('clean', ['markup', 'styles', 'static'], cb));
 
 /**
  * @name build
  */
-gulp.task('build', ['clean'], () => {
-    runSequence(['static', 'styles']);
-});
+gulp.task('build', cb => runSequence('_build', 'scripts', cb));
