@@ -2,9 +2,10 @@ import React, {PropTypes} from 'react';
 import Component from '../../Model';
 import Theme from '../../utilities/theme';
 import getPath from 'lodash/get';
+import moment from 'moment';
 // Components
 import Paper from 'material-ui/Paper';
-import Subheader from 'material-ui/Subheader';
+import DatePicker from 'material-ui/DatePicker';
 import FlatButton from 'material-ui/FlatButton';
 import {
     List,
@@ -81,26 +82,50 @@ export default class Sidebar extends Component {
             );
         }
 
+
+        let time;
+        let spendings = () => {
+            if (!time) {
+                return;
+            }
+
+            return fetchSpendings(moment.utc(time).local().format());
+        };
+
         if (fetchSpendings) {
             output = output.concat(
                 <ListItem
                     key="fetchSpendings"
-                    primaryText="Show my latest transactions"
-                    onClick={fetchSpendings} />
+                    disabled={true}>
+                    <DatePicker
+                        hintText="Pick a date"
+                        autoOk={true}
+                        maxDate={new Date()}
+                        onChange={(event, date) => time = date}/>
+                    <FlatButton
+                        label="Show transactions since"
+                        style={{
+                            width: '100%'
+                        }}
+                        onClick={spendings}
+                        primary={true} />
+                </ListItem>
             );
         }
 
         if (logout) {
             output = output.concat(
-                <FlatButton
+                <ListItem
                     key="signout"
-                    style={{
-                        margin: '8px 16px',
-                        width: 'calc(100% - 32px)'
-                    }}
-                    label="Sign out"
-                    secondary={true}
-                    onClick={logout} />
+                    disabled={true}>
+                    <FlatButton
+                        style={{
+                            width: '100%'
+                        }}
+                        label="Sign out"
+                        secondary={true}
+                        onClick={logout} />
+                </ListItem>
             );
         }
 
