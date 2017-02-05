@@ -17,12 +17,26 @@ export default class Message extends Component {
         const {data} = this.props;
 
         let text = getPath(data, 'text');
+        let type = getPath(data, 'type');
+        let className;
 
         if (!text) {
-            return false;
+            return null;
         }
 
-        return text;
+        switch (type) {
+            case 'answer':
+                className = 'answer';
+                break;
+            case 'balance':
+                className = 'balance';
+                break;
+            default:
+                className = 'prominent';
+                break;
+        }
+
+        return <span className={className}>{text}</span>;
     }
 
     get getHeader() {
@@ -59,7 +73,6 @@ export default class Message extends Component {
                 icon={avatar}
                 size={30} />
         );
-
     }
 
     render() {
@@ -89,7 +102,7 @@ export default class Message extends Component {
                         padding: 16,
                         margin: 0
                     }}>
-                        <span className="prominent">{getText}</span>
+                        {getText}
                     </p>
                 </Paper>
             </Theme>

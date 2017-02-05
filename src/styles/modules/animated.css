@@ -27,11 +27,13 @@
  */
 
 
-.message.animated-enter ~ .message {
+.message.animated-enter ~ .message,
+.message.animated-enter ~ .transactions {
     transform: translateY(-100%);
 }
 
-.message.animated-enter.animated-enter-active ~ .message {
+.message.animated-enter.animated-enter-active ~ .message,
+.message.animated-enter.animated-enter-active ~ .transactions {
     transform: translateY(0%);
     transition: all .6s cubic-bezier(0.2,0,0.4,1);
 }

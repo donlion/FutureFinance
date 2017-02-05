@@ -61,9 +61,8 @@ export default class App extends Component {
 
     login() {
         return this.fetchUser()
-            .then(this.fetchTransactions)
-            .then(this.fetchFeed);
-            //.then(this.fetchCycle);
+            .then(this.fetchFeed)
+            .then(this.fetchCycle);
     }
 
     logout() {
@@ -71,9 +70,11 @@ export default class App extends Component {
         return this.setState({data: EMPTY_STATE.data});
     }
 
+    /**
     componentDidUpdate() {
         console.info(this.state); // eslint-disable-line no-console
     }
+    */
 
     getValue(data) {
         if (!data || isEmpty(data)) {
@@ -161,11 +162,17 @@ export default class App extends Component {
 
                     if (type === 'transactions') {
                         let content = getPath(item, 'feed');
+                        let amount = content.feed.reduce((result, item) => {
+                            result = result + Math.abs(item.amount);
+
+                            return result;
+                        }, 0);
 
                         item = Object.assign({}, item, {
                             feed: content.feed,
                             title: content.title,
-                            date: content.date
+                            date: content.date,
+                            amount: amount
                         });
                     }
 
@@ -261,15 +268,15 @@ export default class App extends Component {
     fetchBalance() {
         return request
             .get(endpointBalance)
-            .catch(() => {})
-            .then(this.fetchFeed);
+            .catch(() => {});
+            /*.then(this.fetchFeed);*/
     }
 
     fetchStatus() {
         return request
             .get(endpointStatus)
-            .catch(() => {})
-            .then(this.fetchFeed);
+            .catch(() => {});
+            /*.then(this.fetchFeed);*/
     }
 
     fetchSpendings(since) {
@@ -277,8 +284,8 @@ export default class App extends Component {
             .get(endpointSpendings, {
                 params: {since: since}
             })
-            .catch(() => {})
-            .then(this.fetchFeed);
+            .catch(() => {});
+            /*.then(this.fetchFeed);*/
     }
 
     get getBody() {

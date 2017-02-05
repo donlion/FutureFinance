@@ -3,10 +3,11 @@ import Component from '../../Model';
 import Theme from '../../utilities/theme';
 import getPath from 'lodash/get';
 import formatTime from '../../utilities/formatTime';
+import numberToCurrency from '../../utilities/numberToCurrency';
 // Components
 import Paper from 'material-ui/Paper';
 import Subheader from 'material-ui/Subheader';
-import CircularProgress from 'material-ui/CircularProgress';
+import Divider from 'material-ui/Divider';
 import Transaction from './Transaction';
 import ReactTransitionGroup from 'react-addons-css-transition-group';
 import Avatar from 'material-ui/Avatar';
@@ -36,7 +37,7 @@ export default class Transactions extends Component {
 
         let transactions = getPath(data, 'transactions');
 
-        if (transactions.length > limit) {
+        if (transactions.length > limit && limit !== 0) {
             transactions = transactions.slice(0, limit);
         }
 
@@ -47,11 +48,6 @@ export default class Transactions extends Component {
         const {getTransactions} = this;
 
         let list = getTransactions;
-
-        let style = {
-            display: 'block',
-            margin: '12px auto'
-        };
 
         if (!list || !list.length) {
             return (
@@ -138,8 +134,23 @@ export default class Transactions extends Component {
                 <MenuItem
                     value={50}
                     primaryText="Limit list to 50 transactions" />
+                <MenuItem
+                    value={0}
+                    primaryText="Show all transactions" />
             </DropDownMenu>
         );
+    }
+
+    get getAmount() {
+        const {data} = this.props;
+
+        let amount = getPath(data, 'amount');
+
+        if (!amount) {
+            amount = 0;
+        }
+
+        return numberToCurrency(amount);
     }
 
     render() {
@@ -147,12 +158,15 @@ export default class Transactions extends Component {
             getList,
             getHeader,
             getTime,
-            getLimitDropdown
+            getLimitDropdown,
+            getAmount
         } = this;
 
         return (
             <Theme>
-                <Paper style={{margin: 12}}>
+                <Paper
+                    className="transactions"
+                    style={{margin: 12}}>
                     <Subheader>
                         <Avatar
                             style={{
@@ -167,6 +181,8 @@ export default class Transactions extends Component {
                         <strong>{getHeader || 'Transactions'}</strong>
                         {getTime ? ` - ${formatTime(getTime)}` : null}
                     </Subheader>
+                    <Subheader>You spent DKK <strong>{getAmount}</strong></Subheader>
+                    <Divider />
                     {getLimitDropdown}
                     {getList}
                 </Paper>

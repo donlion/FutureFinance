@@ -81,7 +81,7 @@ export default class Transaction extends Component {
                     {getTime}
                 </div>
                 <div className="column absorbing">
-                    {getTitle}
+                    {getTitle.replace(new RegExp('¦', 'g'), 'ø')}
                 </div>
                 <div className="column">
                     <span className="prominent">

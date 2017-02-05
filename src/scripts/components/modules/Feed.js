@@ -34,6 +34,7 @@ export default class Feed extends Component {
         let text;
         let title;
         let time;
+        let amount;
         let transactions;
         let id = getPath(data, 'id');
 
@@ -47,8 +48,9 @@ export default class Feed extends Component {
                     <Message
                         key={id}
                         data={{
+                            type,
                             header: title,
-                            text: numberToCurrency(text),
+                            text: `DKK ${numberToCurrency(text)}`,
                             time,
                             avatar: <AccountBalance />,
                             avatarColor: colorBalance
@@ -64,6 +66,7 @@ export default class Feed extends Component {
                     <Message
                         key={id}
                         data={{
+                            type,
                             header: title,
                             text,
                             time,
@@ -76,6 +79,7 @@ export default class Feed extends Component {
                 transactions = getPath(data, 'feed');
                 title = getPath(data, 'title');
                 time = getPath(data, 'date');
+                amount = getPath(data, 'amount');
 
                 if (title.indexOf('Spending since') > -1) {
                     let byDate =  moment.utc(title.replace('Spending since ', '')).local().format('MMM Do YYYY');
@@ -88,7 +92,8 @@ export default class Feed extends Component {
                         data={{
                             transactions,
                             time,
-                            header: title
+                            header: title,
+                            amount
                         }} />
                 );
                 break;

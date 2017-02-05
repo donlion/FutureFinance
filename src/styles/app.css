@@ -36,6 +36,16 @@ small.prominent {
     font-size: smaller;
 }
 
+.balance {
+    font-size: 1.6em;
+    font-weight: bold;
+}
+
+.answer {
+    font-weight: 500;
+    font-size: 1.3em;
+}
+
 /**
 Responsive shit
  */
