@@ -1,6 +1,66 @@
+
 * {
     box-sizing: border-box;
 }
 
 html, body {
+    margin: 0;
+    padding: 0;
+    background-color: #E6EAEC;
 }
+
+.content {
+    max-width: 100%;
+    width: 1140px;
+    margin: 12px auto;
+    display: flex;
+    flex-direction: row;
+}
+.content .left {
+    width: 300px;
+    max-width: 100%;
+    flex-grow: 0;
+    flex-shrink: 0;
+}
+.content .right {
+    flex-grow: 1;
+}
+
+.prominent {
+    font-size: 1.3em;
+    font-weight: 600;
+    color: #666;
+    letter-spacing: .2px;
+}
+small.prominent {
+    font-size: smaller;
+}
+
+.balance {
+    font-size: 1.6em;
+    font-weight: bold;
+}
+
+.answer {
+    font-weight: 500;
+    font-size: 1.3em;
+}
+
+/**
+Responsive shit
+ */
+@media (max-width: 767px) {
+    .content {
+        flex-direction: column;
+        margin: 0 auto;
+    }
+    .content .left {
+        width: 100%;
+    }
+    .content .right {
+        width: 100%;
+    }
+}
+
+@import url('modules/table.css');
+@import url('modules/animated.css');

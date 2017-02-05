@@ -1,0 +1,39 @@
+.animated-enter {
+    opacity: 0.01;
+    transform: translateY(-100%);
+}
+
+.animated-enter.animated-enter-active {
+    opacity: 1;
+    transform: translateY(0%);
+    transition: all .6s cubic-bezier(0.2,0,0.4,1);
+}
+
+.animated-leave {
+    opacity: 1;
+}
+
+.animated-leave.animated-leave-active {
+    opacity: 0.01;
+    transition: all .4s cubic-bezier(0.2,0,0.4,1);
+}
+
+.transition {
+    transition: all .3s cubic-bezier(0.2,0,0.4,1);
+}
+
+/**
+ * Message specific
+ */
+
+
+.message.animated-enter ~ .message,
+.message.animated-enter ~ .transactions {
+    transform: translateY(-100%);
+}
+
+.message.animated-enter.animated-enter-active ~ .message,
+.message.animated-enter.animated-enter-active ~ .transactions {
+    transform: translateY(0%);
+    transition: all .6s cubic-bezier(0.2,0,0.4,1);
+}
