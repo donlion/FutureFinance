@@ -62,8 +62,8 @@ export default class App extends Component {
     login() {
         return this.fetchUser()
             .then(this.fetchTransactions)
-            .then(this.fetchFeed)
-            .then(this.fetchCycle);
+            .then(this.fetchFeed);
+            //.then(this.fetchCycle);
     }
 
     logout() {
@@ -72,7 +72,7 @@ export default class App extends Component {
     }
 
     componentDidUpdate() {
-        console.info(this.state);
+        console.info(this.state); // eslint-disable-line no-console
     }
 
     getValue(data) {
@@ -149,8 +149,6 @@ export default class App extends Component {
         return request.get(endpointFeed)
             .then(response => {
 
-                console.log('response', response);
-
                 let addToFeed = response.reduce((result, item) => {
                     let type = item.type;
                     let feed = item.feed;
@@ -162,7 +160,13 @@ export default class App extends Component {
                     }
 
                     if (type === 'transactions') {
-                        item.feed = getPath(item, 'feed.feed');
+                        let content = getPath(item, 'feed');
+
+                        item = Object.assign({}, item, {
+                            feed: content.feed,
+                            title: content.title,
+                            date: content.date
+                        });
                     }
 
                     result = Object.assign({}, result, {
@@ -244,7 +248,7 @@ export default class App extends Component {
             .then(() => {
                 this._cycle = setTimeout(() => requestAnimationFrame(() => {
                     this.fetchCycle();
-                }), 1000);
+                }), 1100);
             });
     }
 
@@ -255,15 +259,26 @@ export default class App extends Component {
     }
 
     fetchBalance() {
-        return request.get(endpointBalance);
+        return request
+            .get(endpointBalance)
+            .catch(() => {})
+            .then(this.fetchFeed);
     }
 
     fetchStatus() {
-        return request.get(endpointStatus);
+        return request
+            .get(endpointStatus)
+            .catch(() => {})
+            .then(this.fetchFeed);
     }
 
-    fetchSpendings() {
-        return request.get(endpointSpendings);
+    fetchSpendings(since) {
+        return request
+            .get(endpointSpendings, {
+                params: {since: since}
+            })
+            .catch(() => {})
+            .then(this.fetchFeed);
     }
 
     get getBody() {

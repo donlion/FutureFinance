@@ -2,6 +2,7 @@ import React, {PropTypes} from 'react';
 import Component from '../../Model';
 import getPath from 'lodash/get';
 import numberToCurrency from '../../utilities/numberToCurrency';
+import moment from 'moment';
 // Components
 import Message from './Message';
 import Transactions from './Transactions';
@@ -35,10 +36,6 @@ export default class Feed extends Component {
         let time;
         let transactions;
         let id = getPath(data, 'id');
-
-        if (type === 'answer') {
-            console.log('answer', data);
-        }
 
         switch (type) {
             case 'balance':
@@ -78,9 +75,14 @@ export default class Feed extends Component {
             case 'transactions':
                 transactions = getPath(data, 'feed');
                 title = getPath(data, 'title');
-                time = getPath(data, 'feed.created_at');
+                time = getPath(data, 'date');
 
-                component = (!transactions || !transactions.length) ? null : (
+                if (title.indexOf('Spending since') > -1) {
+                    let byDate =  moment.utc(title.replace('Spending since ', '')).local().format('MMM Do YYYY');
+                    title = `Spendings since ${byDate}`;
+                }
+
+                component = !transactions ? null : (
                     <Transactions
                         key={id}
                         data={{
