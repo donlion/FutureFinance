@@ -6,5 +6,5 @@ import moment from 'moment';
  * @returns {string}
  */
 export default function formatTime(time) {
-    return moment(time).format('HH:mm MMM Do');
+    return moment.utc(time).local().format('HH:mm MMM Do');
 }
