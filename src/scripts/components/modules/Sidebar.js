@@ -29,7 +29,12 @@ export default class Sidebar extends Component {
     get getUserDetails() {
         const {
             data,
-            events: {logout}
+            events: {
+                logout,
+                fetchBalance,
+                fetchStatus,
+                fetchSpendings
+            }
         } = this.props;
 
         let output = [];
@@ -49,7 +54,7 @@ export default class Sidebar extends Component {
                     <p>Account: {accountNumber}</p>
                 ),
                 leftAvatar: (
-                    <Avatar src={`https://api.adorable.io/avatars/${name}`} />
+                    <Avatar src={`/static/avatar.jpg`} />
                 )
             };
 
@@ -58,11 +63,41 @@ export default class Sidebar extends Component {
             );
         }
 
+        if (fetchBalance) {
+            output = output.concat(
+                <ListItem
+                    key="fetchBalance"
+                    primaryText="Show my balance"
+                    onClick={fetchBalance} />
+            );
+        }
+
+        if (fetchStatus) {
+            output = output.concat(
+                <ListItem
+                    key="fetchStatus"
+                    primaryText="Show my progress"
+                    onClick={fetchStatus} />
+            );
+        }
+
+        if (fetchSpendings) {
+            output = output.concat(
+                <ListItem
+                    key="fetchSpendings"
+                    primaryText="Show my latest transactions"
+                    onClick={fetchSpendings} />
+            );
+        }
+
         if (logout) {
             output = output.concat(
                 <FlatButton
                     key="signout"
-                    style={{margin: '8px 16px'}}
+                    style={{
+                        margin: '8px 16px',
+                        width: 'calc(100% - 32px)'
+                    }}
                     label="Sign out"
                     secondary={true}
                     onClick={logout} />
@@ -91,7 +126,6 @@ export default class Sidebar extends Component {
                 <Paper
                     style={{margin: 12}}
                     zDepth={1}>
-                    <Subheader>Your profile</Subheader>
                     <List>
                         {getUserDetails}
                     </List>
