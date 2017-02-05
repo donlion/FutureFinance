@@ -8,7 +8,7 @@ export const token = "dXNlcjAyOTptekRQQWdyaktOVjY=";
  * @name userId
  * @type {string}
  */
-export const userId = '4574000002';
+export const userId = '4574000018';
 
 /**
  * endpoint
